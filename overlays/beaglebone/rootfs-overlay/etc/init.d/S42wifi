@@ -5,6 +5,9 @@
 
 echo "[S42wifi] Bringing up wlan0..."
 
+# if usb wifi dongle is not pluged in exit and dont wait
+[ -d /sys/class/net/wlan0 ] || exit 0
+
 # Wait until wlan0 actually exists
 while ! ip link show wlan0 >/dev/null 2>&1; do
     sleep 0.2
