@@ -1,1 +1,2 @@
-source "package/userApps/gpio_web/Config.in"
+source "package/userdefinedapps/gpio_web/Config.in"
+source "package/userdefinedapps/zigbee2mqtt-bin/Config.in"

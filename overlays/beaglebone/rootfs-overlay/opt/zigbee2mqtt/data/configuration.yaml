@@ -1,0 +1,9 @@
+serial:
+  port: /dev/ttyUSB0
+
+mqtt:
+  server: 'mqtt://localhost'
+  base_topic: zigbee
+
+frontend:
+  port: 8080

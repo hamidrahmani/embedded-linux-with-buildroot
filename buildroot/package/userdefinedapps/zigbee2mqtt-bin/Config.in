@@ -1,0 +1,4 @@
+config BR2_PACKAGE_ZIGBEE2MQTT_BIN
+    bool "zigbee2mqtt (precompiled)"
+    help
+      Zigbee binary - from https://github.com/Koenkk/zigbee2mqtt/releases/

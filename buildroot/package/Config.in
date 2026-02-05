@@ -3,7 +3,7 @@ menu "User applications"
 endmenu
 
 menu "User Defined Applications"
-    source "package/userdefinedapps/gpio_web/Config.in"
+    source "package/userdefinedapps/Config.in"
 endmenu
 
 menu "Target packages"

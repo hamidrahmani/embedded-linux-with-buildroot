@@ -1,0 +1,16 @@
+#!/bin/sh
+# Wrapper to start Zigbee2MQTT from the portable bundle
+
+APP_DIR="/opt/zigbee2mqtt"
+NODE_BIN="$APP_DIR/node/bin/node"
+ENTRY_JS="$APP_DIR/index.js"   # or cli.js if you prefer
+
+# Ensure we run from the app dir so relative paths work (data/, etc.)
+cd "$APP_DIR" || exit 1
+
+# Optional: environment that helps serial access & memory use on small devices
+export NODE_ENV=production
+export Z2M_DATA="$APP_DIR/data"
+
+# Start it (foreground when called directly; your init script will background it)
+exec "$NODE_BIN" "$ENTRY_JS" "$@"
