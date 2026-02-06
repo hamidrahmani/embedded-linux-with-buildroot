@@ -48,7 +48,7 @@
             $(eval $(generic-package))       
 
         - register package in buildroot --> source "package/userdefinedapps/zigbee2mqtt-bin/Config.in"
-        - add init script --> /etc/init.d/S50zigbee2mqtt
+        - add init script --> /etc/init.d/S70zigbee2mqtt
             #!/bin/sh
             /opt/zigbee2mqtt/zigbee2mqtt &
         - enable in buildroot --> make menuconfig --> Target packages --> zigbee2mqtt (precompiled) [*]
@@ -77,8 +77,12 @@
             wget https://nodejs.org/dist/v18.17.1/node-v18.17.1-linux-armv7l.tar.xz
             tar xf node-v18.17.1-linux-armv7l.tar.xz
             mv node-v18.17.1-linux-armv7l zigbee2mqtt-armv7/node
+        -build the Zigbee2MQTT frontend
+
     step5: see above
     step6: see above
+    step7: see above
+    step8: see above
 
 ## integrate pre-compiled Zigbee2MQTT bundle
 - setup
@@ -128,3 +132,51 @@
     - Configure Zigbee2MQTT --> Create /opt/zigbee2mqtt/data/configuration.yaml
 
 
+## usig script "build_z2m_bundle.sh"
+this script does:
+- Builds ARM‑native node_modules using Docker (--platform=linux/arm/v7)
+- Embeds the ARM Node.js runtime into the bundle (node/bin/node)
+- Prunes non‑ARM prebuilds (x64/arm64/android) so Buildroot’s arch checks pass
+- Creates a tarball: zigbee2mqtt-<version>-armv7.tar.gz
+- Copies it to your Buildroot dl/ (if you provide the path)
+- Prints the SHA256 line you can paste into a Buildroot .hash file
+
+how-to-use:
+Run it from your VM, where your Zigbee2MQTT repo lives and Docker works:
+./build_z2m_bundle.sh \
+  -z ~/workplace/projects/tools/zigbee2mqtt \
+  -b ~/workplace/projects/embedded-linux-with-buildroot/buildroot \
+  -v 1.41.0 \
+  -n 18.17.1
+
+
+## build your own precompiled Zigbee2MQTT bundle from officail site
+in /tools folder
+- get the tarball:
+    wget https://github.com/Koenkk/zigbee2mqtt/archive/refs/tags/1.41.0.tar.gz -O zigbee2mqtt-src-1.41.0.tar.gz
+- extract 
+    tar xf zigbee2mqtt-src-1.41.0.tar.gz
+    mv zigbee2mqtt-1.41.0 zigbee2mqtt_release
+- go to folder zigbee2mqtt_release
+    - ensure ownership is correct
+        sudo chown -R vboxuser:vboxuser .
+    rm -rf node_modules package-lock.json
+    npm install      --include=dev
+    npm run build
+
+## Use the Official NPM Package (Prebuilt Bundle)
+go to folder:
+    cd ~/workplace/projects/tools
+run:
+    npm view zigbee2mqtt versions --json 
+chose latest version and run:
+    npm pack zigbee2mqtt@1.40.2
+    mkdir z2m_release
+    tar xf zigbee2mqtt-1.40.2.tgz -C z2m_release --strip-components=1
+
+## extract 
+docker pull ghcr.io/koenkk/zigbee2mqtt:1.41.0
+docker create --name z2m ghcr.io/koenkk/zigbee2mqtt:1.41.0
+docker cp z2m:/app ./z2m_release
+docker rm z2m
+rm -rf ./z2m_release/node_modules
